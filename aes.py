@@ -511,38 +511,3 @@ def decrypt(key, ciphertext, workload=100000):
     return AES(key).decrypt_cbc(ciphertext, iv)
 
 
-def benchmark():
-    key = b'P' * 16
-    message = b'M' * 16
-    aes = AES(key)
-    for i in range(30000):
-        aes.encrypt_block(message)
-
-__all__ = [encrypt, decrypt, AES]
-
-if __name__ == '__main__':
-    import sys
-    write = lambda b: sys.stdout.buffer.write(b)
-    read = lambda: sys.stdin.buffer.read()
-
-    if len(sys.argv) < 2:
-        print('Usage: ./aes.py encrypt "key" "message"')
-        print('Running tests...')
-        from tests import *
-        run()
-    elif len(sys.argv) == 2 and sys.argv[1] == 'benchmark':
-        benchmark()
-        exit()
-    elif len(sys.argv) == 3:
-        text = read()
-    elif len(sys.argv) > 3:
-        text = ' '.join(sys.argv[2:])
-
-    if 'encrypt'.startswith(sys.argv[1]):
-        write(encrypt(sys.argv[2], text))
-    elif 'decrypt'.startswith(sys.argv[1]):
-        write(decrypt(sys.argv[2], text))
-    else:
-        print('Expected command "encrypt" or "decrypt" in first argument.')
-
-    # encrypt('my secret key', b'0' * 1000000) # 1 MB encrypted in 20 seconds.
